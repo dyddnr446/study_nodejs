@@ -1,0 +1,90 @@
+<h1>{{title}}</h1>
+
+{{#with post}}
+<h2 class="text-xl">{{title}}</h2>
+<div>
+    작성자 :<b>{{writer}}</b>
+</div>
+<div>
+    조회수 : {{hits}} | 작성일시 : {{dateString createdDT}}
+    <button onclick="modifyPost()">수정</button>
+    <button onclick="deletePost()">삭제</button>
+</div>
+
+<div>
+    <pre>{{content}}</pre>
+</div>
+
+<section>
+    <div>
+        <h3>3개의 댓글이 있습니다</h3>
+    </div>
+
+    <form method="post" action="/write-comment">
+        <div>
+            <div>
+                <input type="text" name="name" placeholder="이름">
+                <input type="password" name="password" placeholder="비밀번호">
+            </div>
+            <div>
+                <textarea cols="40" rows="3" name="comment" placeholder="댓글을 입력해주세요."></textarea>
+                <br><br><button>댓글 쓰기</button>
+            </div>
+        </div>
+    </form>
+</section>
+
+<section>
+    <div>
+        <div>
+            작성자 : <b>댓글 작성자</b>
+        </div>
+        <div>
+            작성일시 : 2022-01-01 00:00:00
+            <button onclick="deleteComment('1')">삭제</button>
+        </div>
+    </div>
+    <div>
+        <pre>{{comment}}</pre>
+    </div>
+</section>
+
+{{/with}}
+
+<footer>
+    <div>
+        <a href="/">목록으로</a>
+    </div>
+</footer>
+
+<script>
+    async function modifyPost() { 
+        const password = prompt("패스워드를 입력해주세요");
+        //비밀번호 미 입력시 반환
+        if (!password){
+            return;
+        }
+        //비밀번호 인증 요청 보낼 때 옵션 설정값
+        const postOption = {
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+        },
+        }
+        //비밀번호 인증 요청
+        const result = await fetch("/check-password",{
+            ...postOption,
+            body: JSON.stringify({id:"{{post._id}}",password})
+        });
+
+        const data = await result.json();
+
+        if(data.isExist){
+            document.location = "/modify/{{post.id}}"
+        } else {
+            alert("패스워드가 올바르지 않습니다");
+        }
+
+    }
+    async function deletePost() { }
+</script>

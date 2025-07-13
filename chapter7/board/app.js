@@ -13,9 +13,11 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+//미들웨어 사용
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 
+//handlebars 엔진 사용 및 세팅
 app.engine("hbs", handlebars.engine({
     helpers: helper,
     extname: '.hbs',
@@ -33,6 +35,7 @@ app.listen(3000, async ()=>{
     console.log("Mongodb Connect")
 });
 
+//메인 화면
 app.get("/", async (req,res) => {
     const page = parseInt(req.query.page) || 1;
     const search = req.query.search || "";
@@ -46,18 +49,16 @@ app.get("/", async (req,res) => {
     
 });
 
-app.get("/write",(req,res)=>{
-    res.render("write", {title:"테스트 게시판"})
-});
-
+//글 내용 상세보기
 app.get("/detail/:id", async (req,res)=>{
     const result = await postService.getDetailPost(collection, req.params.id);
     res.render("detail",{
         title:"테스트 게시판",
-        post: result.value,
+        post: result,
     });
 });
 
+//글쓰기
 app.post("/write", async (req,res)=>{
     const post = req.body;
     const result = await postService.writePost(collection, post);
@@ -65,3 +66,12 @@ app.post("/write", async (req,res)=>{
     res.redirect(`/detail/${result.insertedId}`);
 });
 
+app.post("/check-password", async (req,res)=>{
+    const {id, password} = req.body;
+    const post = await postService.getPostByIdAndPassword(collection, {id, password});
+    if(!post){
+        return res.status(404).json({isExist:false});
+    } else{
+        return res.json({isExist:true});
+    }
+});

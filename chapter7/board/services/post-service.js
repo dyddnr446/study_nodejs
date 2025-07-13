@@ -1,5 +1,6 @@
 import paginator from "../utils/paginator.js"
-import { ObjectId } from "mongodb";
+import { ObjectId } from 'mongodb';
+
 
 async function writePost(collection, post){
     post.hits=0;
@@ -22,14 +23,15 @@ async function list(collection, page, search) {
 
 const projectOption ={
     projection:{
-        passworld: 0,
+        password: 0,
         "comments.password":0,
     }
 }
 
 async function getDetailPost(collection, id) {
-    return await collection.findOneAndUpdate({_id:ObjectId(id)}, {$inc : {hits:1}}, projectOption);
+    return await collection.findOneAndUpdate({_id: new ObjectId(id)}, {$inc : {hits:1}}, projectOption);
 }
+
 export default{
     writePost,
     list,
