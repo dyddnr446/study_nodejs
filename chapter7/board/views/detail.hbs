@@ -6,7 +6,7 @@
     작성자 :<b>{{writer}}</b>
 </div>
 <div>
-    조회수 : {{hits}} | 작성일시 : {{dateString createdDT}}
+    조회수 : {{hits}} | 작성일시 : {{dateString createDt}}
     <button onclick="modifyPost()">수정</button>
     <button onclick="deletePost()">삭제</button>
 </div>
@@ -80,7 +80,7 @@
         const data = await result.json();
 
         if(data.isExist){
-            document.location = "/modify/{{post.id}}"
+            document.location = "/modify/{{post._id}}"
         } else {
             alert("패스워드가 올바르지 않습니다");
         }
